@@ -119,3 +119,23 @@ class PairEditDistanceMethod(PairMethod):
         super().dump(words, keep, drop, mapping)
 
 
+class PairReverseMethod(PairMethod):
+    """Make Similar Pair Through Reverse String"""
+    def pair(self):
+        words, keep, drop, mapping = super().load()
+        for word1 in words:
+            for word2 in words:
+                if word1 == word2:
+                    continue
+                w1, w2 = word1, word2[:: -1]
+                if w1 != w2:
+                    continue
+                if word1 > word2:
+                    w1, w2 = word2, word1
+                else:
+                    w1, w2 = word1, word2
+                mapping.add((w1, w2))
+                keep.setdefault(w1, set()).add(w2)
+                keep.setdefault(w2, set()).add(w1)
+
+        super().dump(words, keep, drop, mapping)

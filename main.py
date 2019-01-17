@@ -24,6 +24,7 @@ class Manager(object):
         tasks.assign(PairCommand(PairWholeSemanticsMethod))
         tasks.assign(PairCommand(PairLiteralContainMethod))
         tasks.assign(PairCommand(PairEditDistanceMethod))
+        tasks.assign(PairCommand(PairReverseMethod))
         tasks.assign(MergeCommand(UnionMethod))
         tasks.assign(EraseCommand(EraseSpecialMethod))
         tasks.assign(EraseCommand(EraseCidnameSimMethod))
@@ -32,19 +33,20 @@ class Manager(object):
         tasks.assign(EraseCommand(EraseBrandMethod))
         tasks.assign(PairCommand(PairWholeSemanticsMethod))
         tasks.assign(PairCommand(PairLiteralContainMethod))
+        tasks.assign(PairCommand(PairReverseMethod))
         tasks.assign(PairCommand(PairEditDistanceMethod, Parameters.pairUnionEditDistanceThreshold))
         tasks.assign(AppendCommand(AppendSpecialMethod))
         tasks.assign(AppendCommand(AppendCountryMethod))
         tasks.assign(StatisticCommand(StatisticAllSubmarketMethod))
         tasks.assign(StatisticCommand(StatisticSubmarketBrandBizMethod))
         tasks.assign(StatisticCommand(StatisticSubmarketBrandSoldMethod))
+        tasks.assign(TransCommand(SetTransToPairMethod))
+        tasks.assign(TransCommand(PairTransToSetMethod))
         tasks.assign(BuildInfoCommand(BuildMainAndTopBrandMethod))
-        # tasks.assign(TransCommand(PairTransToSetMethod))
-        # tasks.assign(ShowCommand(ShowMethod))
-        # tasks.assign(ShowCommand(ShowPairWordsMethod))
-        # tasks.assign(ShowCommand(ShowSetWordsMethod))
-        # tasks.assign(ShowCommand(ShowTopWordsMethod))
-        # tasks.assign(ShowCommand(ShowTopWordsExceptKeepWordsMethod))
+        tasks.assign(ShowCommand(ShowPairWordsMethod))
+        tasks.assign(ShowCommand(ShowSetWordsMethod))
+        tasks.assign(ShowCommand(ShowTopWordsMethod))
+        tasks.assign(ShowCommand(ShowTopWordsExceptKeepWordsMethod))
         tasks.assign(ClearFileCommand(RemainFinalResultMethod))
 
         tasks.execute()
@@ -54,7 +56,7 @@ if __name__ == '__main__':
     pcid = "2"
     cid = "50008881"
     datamonth = "201810"
-    cidname = "phone"
+    cidname = "文胸"
 
     obj = Manager(pcid=pcid, cid=cid, datamonth=datamonth, cidname=cidname)
     obj.run()

@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 
 
-from SubmarketMerge.settings import Parameters
+from SubmarketMerge.settings import Parameters, Mode
 from SubmarketMerge.tools.utils import load, dump, read
 
 
@@ -16,6 +16,29 @@ class StatisticMethod(object):
 class StatisticAllSubmarketMethod(StatisticMethod):
     """Statistic All Submarket Words"""
     def statistic(self):
+        if Mode.statsLOCAL:
+            try:
+                load("statsAllSubItemidSet")
+                load("statsAllSubBrandSet")
+                load("statsAllSubSellerSet")
+                load("statsAllSubBiz30day")
+                load("statsAllSubTotalSoldPrice")
+                load("statsAllSubSoldAverPrice")
+
+                load("statsAllSubMacroCondition")
+                load("statsAllItemidMapping")
+
+                load("statsAllSubBiz30dayShare")
+                load("statsAllSubBiz30dayRank")
+                load("statsAllSubBiz30dayReRank")
+                load("statsAllSubTotalSoldPriceShare")
+                load("statsAllSubTotalSoldPriceRank")
+                load("statsAllSubTotalSoldPriceReRank")
+            except FileNotFoundError:
+                print("StatisticAllSubmarketMethod: Don't Have Local Result Files")
+            else:
+                return
+
         words = load("submarketWords")
         items = read("factItem")()
 
@@ -37,14 +60,18 @@ class StatisticAllSubmarketMethod(StatisticMethod):
             for word in words:
                 if word in v["title"]:
                     itemid_set.setdefault(word, set()).add(v["itemid"])
-                    brand_set.setdefault(word, set()).add(v["brand"])
-                    seller_set.setdefault(word, set()).add(v["sellernick"])
+                    if v["brand"] == v["brand"]:
+                        brand_set.setdefault(word, set()).add(v["brand"])
+                    if v["sellernick"] == v["sellernick"]:
+                        seller_set.setdefault(word, set()).add(v["sellernick"])
                     biz30day[word] += v["biz30day"]
                     total_sold_price[word] += v["total_sold_price"]
 
             macro_conditions.setdefault("itemid", set()).add(v["itemid"])
-            macro_conditions.setdefault("brand", set()).add(v["brand"])
-            macro_conditions.setdefault("seller", set()).add(v["sellernick"])
+            if v["brand"] == v["brand"]:
+                macro_conditions.setdefault("brand", set()).add(v["brand"])
+            if v["sellernick"] == v["sellernick"]:
+                macro_conditions.setdefault("seller", set()).add(v["sellernick"])
             macro_conditions["biz30day"] += v["biz30day"]
             macro_conditions["total"] += v["total_sold_price"]
 
@@ -127,6 +154,17 @@ class StatisticAllSubmarketMethod(StatisticMethod):
 class StatisticSubmarketBrandBizMethod(StatisticMethod):
     """Statistic Main Biz30day Submarket Words"""
     def statistic(self, threshold=Parameters.mainBizThreshold):
+        if Mode.statsLOCAL:
+            try:
+                load("statsSubBrandBizNum")
+                load("statsSubBrandBizShare")
+                load("statsSubBrandBizRank")
+                load("statsSubBrandBizReRank")
+            except FileNotFoundError:
+                print("StatisticSubmarketBrandBizMethod: Don't Have Local Result Files")
+            else:
+                return
+
         words = load("submarketWords")
         submarket_biz30day = load("statsAllSubBiz30day")
         itemid_set = load("statsAllSubItemidSet")
@@ -163,6 +201,7 @@ class StatisticSubmarketBrandBizMethod(StatisticMethod):
                     prev = value
                 submarket_brand_rank[word][brand] = rank
                 submarket_brand_rerank[word].setdefault(rank, list()).append(brand)
+                submarket_brand_rerank[word][rank].sort()
 
         dump(submarket_brand_num, "statsSubBrandBizNum")
         dump(submarket_brand_share, "statsSubBrandBizShare")
@@ -173,6 +212,17 @@ class StatisticSubmarketBrandBizMethod(StatisticMethod):
 class StatisticSubmarketBrandSoldMethod(StatisticMethod):
     """Statistic Main Total Sold Price Submarket Words"""
     def statistic(self, threshold=Parameters.mainSoldThreshold):
+        if Mode.statsLOCAL:
+            try:
+                load("statsSubBrandSoldNum")
+                load("statsSubBrandSoldShare")
+                load("statsSubBrandSoldRank")
+                load("statsSubBrandSoldReRank")
+            except FileNotFoundError:
+                print("StatisticSubmarketBrandSoldMethod: Don't Have Local Result Files")
+            else:
+                return
+
         words = load("submarketWords")
         submarket_total_sold_price = load("statsAllSubTotalSoldPrice")
         itemid_set = load("statsAllSubItemidSet")
@@ -209,6 +259,7 @@ class StatisticSubmarketBrandSoldMethod(StatisticMethod):
                     prev = value
                 submarket_brand_rank[word][brand] = rank
                 submarket_brand_rerank[word].setdefault(rank, list()).append(brand)
+                submarket_brand_rerank[word][rank].sort()
 
         dump(submarket_brand_num, "statsSubBrandSoldNum")
         dump(submarket_brand_share, "statsSubBrandSoldShare")

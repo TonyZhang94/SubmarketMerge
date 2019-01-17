@@ -24,6 +24,7 @@ class AppendMethod(object):
 
 
 class AppendSpecialMethod(AppendMethod):
+    """Append Special Words For Special Pcid Cid"""
     def append(self):
         pcid, cid, _ = Entrance().params
         key = "%s %s" % (pcid, cid)
@@ -36,6 +37,7 @@ class AppendSpecialMethod(AppendMethod):
 
 
 class AppendCountryMethod(AppendMethod):
+    """Append Country Words"""
     def append(self):
         words = super().load()
         country, _, _ = knowledge_country()

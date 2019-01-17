@@ -34,8 +34,8 @@ class Mode(object):
 
     """For Use"""
     # stcLOCAL = True
-    # cutLOCAL = False
-    # statsLOCAL = False
+    # cutLOCAL = True
+    # statsLOCAL = True
     # savePKL = True
     # clearLOCAL = True
 
@@ -48,7 +48,6 @@ class Parameters(object):
     cutHotSearchWordsNum = 300
 
     cidnameSimThreshold = 0.7
-
     coBrandFilterNum = 20
     enBrandFilterNum = 20
     zhBrandFilterNum = 500
@@ -61,6 +60,13 @@ class Parameters(object):
     topBizNum = 20
     mainSoldThreshold = 0.8
     topSoldNum = 20
+
+    addAddAllCountryPairFlag = False
+    addAddAllCountrySetFlag = False
+    showWordsBizTopNum = 50
+    showWordsSoldTopNum = 50
+    showWordsExceptKeepWordsBizTopNum = 30
+    showWordsExceptKeepWordsSoldTopNum = 30
 
     def __new__(cls, *args, **kwargs):
         raise InstantiationError

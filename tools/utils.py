@@ -49,6 +49,19 @@ def show(name, repath=None):
             print(v)
 
 
+def show_word(word):
+    pcid, cid, _ = Entrance().params
+    info = load(_, repath=FileBase.result.format(pcid=pcid, cid=cid, name="submarketInfo"))
+    print("========= Show %s =========" % word)
+    for k, v in info[word].items():
+        if isinstance(v, dict):
+            print(k)
+            for kk, vv in v.items():
+                print(kk, vv)
+        else:
+            print(k, v)
+
+
 def read(src):
     funcs = {name: func for name, func in inspect.getmembers(
         SubmarketMerge.component.readData, inspect.isfunction) if "_info" in name}

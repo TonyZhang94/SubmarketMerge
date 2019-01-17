@@ -13,8 +13,9 @@ from SubmarketMerge.component.eraseMethod import *
 from SubmarketMerge.component.pairMethod import *
 from SubmarketMerge.component.appendMethod import *
 from SubmarketMerge.component.statisticMethod import *
-from SubmarketMerge.component.buildInfoMethod import *
 from SubmarketMerge.component.transMethod import *
+from SubmarketMerge.component.buildInfoMethod import *
+from SubmarketMerge.component.showMethod import *
 from SubmarketMerge.component.clearFileMethod import *
 
 # try:
@@ -126,14 +127,22 @@ class StatisticCommand(TasksObj):
     obj = Descriptor(StatisticMethod)
 
     def __init__(self, method):
-        if Mode.statsLOCAL or method is None:
-            self.obj = UseLocalStatsMethod(method)
-        else:
-            self.obj = method()
+        self.obj = method()
 
     @logging
     def execute(self):
         self.obj.statistic()
+
+
+class TransCommand(TasksObj):
+    obj = Descriptor(TransMethod)
+
+    def __init__(self, method):
+        self.obj = method()
+
+    @logging
+    def execute(self):
+        self.obj.trans()
 
 
 class BuildInfoCommand(TasksObj):
@@ -152,15 +161,20 @@ class BuildInfoCommand(TasksObj):
         self.obj.build()
 
 
-class TransCommand(TasksObj):
-    obj = Descriptor(TransMethod)
+class ShowCommand(TasksObj):
+    obj = Descriptor(ShowMethod)
 
-    def __init__(self, method):
+    def __init__(self, method, threshold=None):
         self.obj = method()
+        if threshold is not None:
+            self.obj.threshold = threshold
+
+        if hasattr(self.obj, "threshold"):
+            self.doc = self.obj.__doc__ + " // Threshold " + str(self.obj.threshold)
 
     @logging
     def execute(self):
-        self.obj.trans()
+        self.obj.show()
 
 
 class ClearFileCommand(TasksObj):

@@ -1,8 +1,9 @@
 # -*- coding:utf-8 -*-
 
 
-from SubmarketMerge.settings import Parameters
-from SubmarketMerge.tools.utils import load, dump, read
+from SubmarketMerge.settings import Parameters, FileBase
+from SubmarketMerge.tools.public import Entrance
+from SubmarketMerge.tools.utils import load, dump
 
 
 class BuildInfoMethod(object):
@@ -41,23 +42,20 @@ class BuildMainAndTopBrandMethod(BuildInfoMethod):
 
         biz_brand_num = load("statsSubBrandBizNum")
         biz_brand_share = load("statsSubBrandBizShare")
-        biz_brand_rank = ("statsSubBrandBizRank")
+        # biz_brand_rank = load("statsSubBrandBizRank")
         biz_brand_rerank = load("statsSubBrandBizReRank")
-        biz_main_size = len(biz_brand_rerank) * self.threshold["biz main"]
 
         sold_brand_num = load("statsSubBrandSoldNum")
         sold_brand_share = load("statsSubBrandSoldShare")
-        sold_brand_rank = ("statsSubBrandSoldRank")
+        # sold_brand_rank = load("statsSubBrandSoldRank")
         sold_brand_rerank = load("statsSubBrandSoldReRank")
-        sold_main_size = len(sold_brand_rerank) * self.threshold["sold main"]
 
         for word in words:
             info[word] = dict()
             if word not in itemid_set.keys():
-                print(word, "not in title")
                 info[word]["inTitle"] = False
                 continue
-            info[word]["in title flag"] = True
+            info[word]["inTitle"] = True
 
             info[word]["itemid set"] = itemid_set[word]
             info[word]["brand set"] = brand_set[word]
@@ -71,28 +69,65 @@ class BuildMainAndTopBrandMethod(BuildInfoMethod):
             info[word]["total sold price share"] = total_sold_price_share[word]
             info[word]["total sold price rank"] = total_sold_price_rank[word]
 
+            biz_word_brand_num = 0
             for rank, brands in biz_brand_rerank[word].items():
-                if rank < biz_main_size:
+                biz_word_brand_num += len(brands)
+            biz_main_size = biz_word_brand_num * self.threshold["biz main"]
+            if biz_main_size < self.threshold["biz top"]:
+                biz_main_size = self.threshold["biz top"]
+
+            rank, num = 0, 0
+            info[word]["top biz brand"] = dict()
+            while True:
+                rank += 1
+                try:
+                    brands = biz_brand_rerank[word][rank]
+                except KeyError:
+                    # print("Don't have enough words as expect.")
+                    break
+                if num < biz_main_size:
                     info[word].setdefault("main biz brand", list()).extend(brands)
 
-                if rank < self.threshold["biz top"]:
-                    info[word]["top biz brand"] = dict()
+                if num < self.threshold["biz top"]:
                     for brand in brands:
                         info[word]["top biz brand"][brand] = dict()
                         info[word]["top biz brand"][brand]["num"] = biz_brand_num[word][brand]
                         info[word]["top biz brand"][brand]["share"] = biz_brand_share[word][brand]
                         info[word]["top biz brand"][brand]["rank"] = rank
 
+                num += len(brands)
+                if biz_main_size <= num and self.threshold["biz top"] <= num:
+                    break
+
+            sold_word_brand_num = 0
             for rank, brands in sold_brand_rerank[word].items():
-                if rank < sold_main_size:
+                sold_word_brand_num += len(brands)
+            sold_main_size = sold_word_brand_num * self.threshold["sold main"]
+            if sold_main_size < self.threshold["sold top"]:
+                sold_main_size = self.threshold["sold top"]
+
+            rank, num = 0, 0
+            info[word]["top sold brand"] = dict()
+            while True:
+                rank += 1
+                try:
+                    brands = sold_brand_rerank[word][rank]
+                except KeyError:
+                    # print("Don't have enough words as expect.")
+                    break
+                if num < sold_main_size:
                     info[word].setdefault("main sold brand", list()).extend(brands)
 
-                if rank < self.threshold["sold top"]:
-                    info[word]["top sold brand"] = dict()
+                if num < self.threshold["sold top"]:
                     for brand in brands:
                         info[word]["top sold brand"][brand] = dict()
                         info[word]["top sold brand"][brand]["num"] = sold_brand_num[word][brand]
                         info[word]["top sold brand"][brand]["share"] = sold_brand_share[word][brand]
                         info[word]["top sold brand"][brand]["rank"] = rank
 
-        dump(info, "SubmarketInfo")
+                num += len(brands)
+                if sold_main_size <= num and self.threshold["sold top"] <= num:
+                    break
+
+        pcid, cid, _ = Entrance().params
+        dump(info, _, repath=FileBase.result.format(pcid=pcid, cid=cid, name="submarketInfo"))
