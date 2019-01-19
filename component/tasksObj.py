@@ -36,6 +36,7 @@ class TasksObj(object):
 
     def execute(self):
         """Excute Commands"""
+        raise NotImplementedError
 
 
 class InitCommand(TasksObj):

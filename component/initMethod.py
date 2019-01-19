@@ -14,6 +14,7 @@ class InitMethod(object):
 
     def init(self):
         """Init Function"""
+        raise NotImplementedError
 
 
 class InitFilesMethod(InitMethod):

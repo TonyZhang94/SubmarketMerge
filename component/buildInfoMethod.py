@@ -12,6 +12,7 @@ class BuildInfoMethod(object):
 
     def build(self):
         """Build Function"""
+        raise NotImplementedError
 
 
 class BuildMainAndTopBrandMethod(BuildInfoMethod):

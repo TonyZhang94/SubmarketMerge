@@ -14,6 +14,7 @@ class PairMethod(object):
 
     def pair(self):
         """Pair Function"""
+        raise NotImplementedError
 
     @staticmethod
     def load():

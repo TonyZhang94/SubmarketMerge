@@ -10,6 +10,7 @@ class TransMethod(object):
 
     def trans(self):
         """Trans Function"""
+        raise NotImplementedError
 
 
 class SetTransToPairMethod(TransMethod):

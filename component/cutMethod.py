@@ -13,6 +13,7 @@ class CutMethod(object):
 
     def cut(self):
         """Cut Function"""
+        raise NotImplementedError
 
 
 class CutWithBrandMethod(CutMethod):

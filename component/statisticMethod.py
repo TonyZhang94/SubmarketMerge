@@ -11,6 +11,7 @@ class StatisticMethod(object):
 
     def statistic(self):
         """Statistic Function"""
+        raise NotImplementedError
 
 
 class StatisticAllSubmarketMethod(StatisticMethod):

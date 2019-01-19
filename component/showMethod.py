@@ -13,6 +13,7 @@ class ShowMethod(object):
 
     def show(self):
         """Show Function"""
+        raise NotImplementedError
 
     @staticmethod
     def load(name):

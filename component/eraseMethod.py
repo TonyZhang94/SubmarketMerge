@@ -15,6 +15,7 @@ class EraseMethod(object):
 
     def erase(self):
         """Erase Function"""
+        raise NotImplementedError
 
     @staticmethod
     def load():

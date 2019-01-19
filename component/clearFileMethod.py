@@ -13,6 +13,7 @@ class ClearFileMethod(object):
 
     def clear(self):
         """Clear Function"""
+        raise NotImplementedError
 
 
 class RemainFinalResultMethod(ClearFileMethod):

@@ -13,6 +13,7 @@ class AppendMethod(object):
 
     def append(self):
         """Append Function"""
+        raise NotImplementedError
 
     @staticmethod
     def load():

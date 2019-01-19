@@ -9,6 +9,7 @@ class MergeMethod(object):
 
     def merge(self):
         """Merget Function"""
+        raise NotImplementedError
 
 
 class IntersectionMethod(MergeMethod):
