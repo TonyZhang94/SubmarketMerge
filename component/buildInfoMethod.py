@@ -3,7 +3,7 @@
 
 from SubmarketMerge.settings import Parameters, FileBase
 from SubmarketMerge.tools.public import Entrance
-from SubmarketMerge.tools.utils import load, dump
+from SubmarketMerge.tools.utils import load, dump, read
 
 
 class BuildInfoMethod(object):
@@ -13,6 +13,11 @@ class BuildInfoMethod(object):
     def build(self):
         """Build Function"""
         raise NotImplementedError
+
+    @staticmethod
+    def dump(data, name):
+        pcid, cid, _ = Entrance().params
+        dump(data, _, repath=FileBase.result.format(pcid=pcid, cid=cid, name=name))
 
 
 class BuildMainAndTopBrandMethod(BuildInfoMethod):
@@ -130,5 +135,66 @@ class BuildMainAndTopBrandMethod(BuildInfoMethod):
                 if sold_main_size <= num and self.threshold["sold top"] <= num:
                     break
 
-        pcid, cid, _ = Entrance().params
-        dump(info, _, repath=FileBase.result.format(pcid=pcid, cid=cid, name="submarketInfo"))
+        super().dump(info, "submarketInfo")
+
+
+class BuildTopBizBrandsMethod(BuildInfoMethod):
+    """Statistic Top Biz30day Brands"""
+    def build(self):
+        items = read("factItem")()
+        items = items[items["brand"] == items["brand"]]
+        macro_condition = load("statsAllSubMacroCondition")
+
+        def sum_biz(df):
+            biz_sum = df["biz30day"].sum()
+            df["biz_sum"] = biz_sum
+            try:
+                df["biz_share"] = biz_sum / macro_condition["biz30day"]
+            except ZeroDivisionError:
+                df["biz_share"] = 0
+            return df
+
+        items["biz30day"] = items["biz30day"].fillna(0)
+        items = items.groupby(["brand"]).apply(sum_biz).drop_duplicates(["brand"]).sort_values(
+            "biz_sum", ascending=False)
+        items = items[["brand", "biz_sum", "biz_share"]]
+
+        prev, rank = 0, 0
+        for k, v in items.iterrows():
+            if prev != v["biz_sum"]:
+                rank += 1
+                prev = v["biz_sum"]
+            items.at[k, "rank"] = rank
+
+        super().dump(items, "statsTopBizBrands")
+
+
+class BuildTopSoldBrandsMethod(BuildInfoMethod):
+    """Statistic Top Total Sold Price Brands"""
+    def build(self):
+        items = read("factItem")()
+        items = items[items["brand"] == items["brand"]]
+        macro_condition = load("statsAllSubMacroCondition")
+
+        def sum_sold(df):
+            sold_sum = df["total_sold_price"].sum()
+            df["sold_sum"] = sold_sum
+            try:
+                df["sold_share"] = sold_sum / macro_condition["total"]
+            except ZeroDivisionError:
+                df["sold_share"] = 0
+            return df
+
+        items["total_sold_price"] = items["total_sold_price"].fillna(0)
+        items = items.groupby(["brand"]).apply(sum_sold).drop_duplicates(["brand"]).sort_values(
+            "sold_sum", ascending=False)
+        items = items[["brand", "sold_sum", "sold_share"]]
+
+        prev, rank = 0, 0
+        for k, v in items.iterrows():
+            if prev != v["sold_sum"]:
+                rank += 1
+                prev = v["sold_sum"]
+            items.at[k, "rank"] = rank
+
+        super().dump(items, "statsTopSoldBrands")

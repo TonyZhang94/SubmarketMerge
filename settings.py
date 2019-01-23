@@ -67,6 +67,8 @@ class Parameters(object):
     showWordsSoldTopNum = 50
     showWordsExceptKeepWordsBizTopNum = 30
     showWordsExceptKeepWordsSoldTopNum = 30
+    showTopBizBrandsNum = 20
+    showTopSoldBrandsNum = 20
 
     def __new__(cls, *args, **kwargs):
         raise InstantiationError

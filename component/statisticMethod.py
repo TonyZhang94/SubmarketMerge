@@ -275,3 +275,79 @@ class UseLocalStatsMethod(StatisticMethod):
 
     def statistic(self):
         pass
+
+
+class StatisticTopBizBrandsMethod(StatisticMethod):
+    """Statistic Top Biz30day Brands"""
+    def statistic(self):
+        if Mode.statsLOCAL:
+            try:
+                load("statsTopBizBrand")
+            except FileNotFoundError:
+                print("StatisticTopBizBrandMethod: Don't Have Local Result Files")
+            else:
+                return
+
+        items = read("factItem")()
+        items = items[items["brand"] == items["brand"]]
+        macro_condition = load("statsAllSubMacroCondition")
+
+        def sum_biz(df):
+            biz_sum = df["biz30day"].sum()
+            df["biz_sum"] = biz_sum
+            try:
+                df["biz_share"] = biz_sum / macro_condition["biz30day"]
+            except ZeroDivisionError:
+                df["biz_share"] = 0
+            return df
+
+        items["biz30day"] = items["biz30day"].fillna(0)
+        items = items.groupby(["brand"]).apply(sum_biz).drop_duplicates(["brand"]).sort_values(
+            "biz_sum", ascending=False)
+        items = items[["brand", "biz_sum", "biz_share"]]
+
+        prev, rank = 0, 0
+        for k, v in items.iterrows():
+            if prev != v["biz_sum"]:
+                rank += 1
+                prev = v["biz_sum"]
+            items.at[k, "rank"] = rank
+        dump(items, "statsTopBizBrands")
+
+
+class StatisticTopSoldBrandsMethod(StatisticMethod):
+    """Statistic Top Total Sold Price Brands"""
+    def statistic(self):
+        if Mode.statsLOCAL:
+            try:
+                load("statsTopSoldBrand")
+            except FileNotFoundError:
+                print("StatisticTopSoldBrandMethod: Don't Have Local Result Files")
+            else:
+                return
+
+        items = read("factItem")()
+        items = items[items["brand"] == items["brand"]]
+        macro_condition = load("statsAllSubMacroCondition")
+
+        def sum_sold(df):
+            sold_sum = df["total_sold_price"].sum()
+            df["sold_sum"] = sold_sum
+            try:
+                df["sold_share"] = sold_sum / macro_condition["total"]
+            except ZeroDivisionError:
+                df["sold_share"] = 0
+            return df
+
+        items["total_sold_price"] = items["total_sold_price"].fillna(0)
+        items = items.groupby(["brand"]).apply(sum_sold).drop_duplicates(["brand"]).sort_values(
+            "sold_sum", ascending=False)
+        items = items[["brand", "sold_sum", "sold_share"]]
+
+        prev, rank = 0, 0
+        for k, v in items.iterrows():
+            if prev != v["sold_sum"]:
+                rank += 1
+                prev = v["sold_sum"]
+            items.at[k, "rank"] = rank
+        dump(items, "statsTopSoldBrands")

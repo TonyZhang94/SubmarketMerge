@@ -24,8 +24,8 @@ if __name__ == '__main__':
     #     if x not in map1:
     #         print(x)
 
-    for x in load("smKeep"):
-        print(x)
+    # for x in load("smKeep"):
+    #     print(x)
 
     # show_word("日式")
     # show_word("钢圈")

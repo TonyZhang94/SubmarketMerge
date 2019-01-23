@@ -165,3 +165,19 @@ class ShowTopWordsExceptKeepWordsMethod(ShowMethod):
 
         super().dump(biz_top_words, "topBizWordsExceptKeepWords")
         super().dump(sold_top_words, "topSoldWordsExceptKeepWords")
+
+
+class ShowTopBrands(ShowMethod):
+    """Show Top Biz30day & Total Sold Price Brands"""
+    def __init__(self):
+        self.threshold = {
+            "biz top num": Parameters.showTopBizBrandsNum,
+            "sold top num": Parameters.showTopSoldBrandsNum
+        }
+
+    def show(self):
+        top_biz_brand = load("statsTopBizBrands")[: self.threshold["biz top num"]]
+        top_sold_brand = load("statsTopSoldBrands")[: self.threshold["sold top num"]]
+
+        super().dump(top_biz_brand, "TopBizBrands")
+        super().dump(top_sold_brand, "TopSoldBrands")

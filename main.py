@@ -11,6 +11,7 @@ class Manager(object):
         Entrance(pcid=pcid, cid=cid, datamonth=datamonth, cidname=cidname)
 
     @staticmethod
+    @logging
     def run():
         tasks = Tasks()
         tasks.assign(InitCommand(InitFilesMethod))
@@ -40,6 +41,8 @@ class Manager(object):
         tasks.assign(StatisticCommand(StatisticAllSubmarketMethod))
         tasks.assign(StatisticCommand(StatisticSubmarketBrandBizMethod))
         tasks.assign(StatisticCommand(StatisticSubmarketBrandSoldMethod))
+        tasks.assign(StatisticCommand(StatisticTopBizBrandsMethod))
+        tasks.assign(StatisticCommand(StatisticTopSoldBrandsMethod))
         tasks.assign(TransCommand(SetTransToPairMethod))
         tasks.assign(TransCommand(PairTransToSetMethod))
         tasks.assign(BuildInfoCommand(BuildMainAndTopBrandMethod))
@@ -47,6 +50,8 @@ class Manager(object):
         tasks.assign(ShowCommand(ShowSetWordsMethod))
         tasks.assign(ShowCommand(ShowTopWordsMethod))
         tasks.assign(ShowCommand(ShowTopWordsExceptKeepWordsMethod))
+        tasks.assign(ShowCommand(ShowTopBrands))
+
         tasks.assign(ClearFileCommand(RemainFinalResultMethod))
 
         tasks.execute()
