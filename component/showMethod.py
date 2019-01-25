@@ -179,5 +179,5 @@ class ShowTopBrands(ShowMethod):
         top_biz_brand = load("statsTopBizBrands")[: self.threshold["biz top num"]]
         top_sold_brand = load("statsTopSoldBrands")[: self.threshold["sold top num"]]
 
-        super().dump(top_biz_brand, "TopBizBrands")
-        super().dump(top_sold_brand, "TopSoldBrands")
+        super().dump(top_biz_brand, "topBizBrands")
+        super().dump(top_sold_brand, "topSoldBrands")

@@ -61,18 +61,14 @@ class StatisticAllSubmarketMethod(StatisticMethod):
             for word in words:
                 if word in v["title"]:
                     itemid_set.setdefault(word, set()).add(v["itemid"])
-                    if v["brand"] == v["brand"]:
-                        brand_set.setdefault(word, set()).add(v["brand"])
-                    if v["sellernick"] == v["sellernick"]:
-                        seller_set.setdefault(word, set()).add(v["sellernick"])
+                    brand_set.setdefault(word, set()).add(v["brand"])
+                    seller_set.setdefault(word, set()).add(v["sellernick"])
                     biz30day[word] += v["biz30day"]
                     total_sold_price[word] += v["total_sold_price"]
 
             macro_conditions.setdefault("itemid", set()).add(v["itemid"])
-            if v["brand"] == v["brand"]:
-                macro_conditions.setdefault("brand", set()).add(v["brand"])
-            if v["sellernick"] == v["sellernick"]:
-                macro_conditions.setdefault("seller", set()).add(v["sellernick"])
+            macro_conditions.setdefault("brand", set()).add(v["brand"])
+            macro_conditions.setdefault("seller", set()).add(v["sellernick"])
             macro_conditions["biz30day"] += v["biz30day"]
             macro_conditions["total"] += v["total_sold_price"]
 
